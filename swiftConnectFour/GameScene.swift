@@ -9,36 +9,112 @@
 import SpriteKit
 
 class GameScene: SKScene {
-    override func didMoveToView(view: SKView) {
-        /* Setup your scene here */
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Hello, World!";
-        myLabel.fontSize = 65;
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
+    
+    var game: Game!
+    
+    let TileWidth: CGFloat = 32.0
+    let TileHeight: CGFloat = 36.0
+    
+    let boardLayer = SKNode()
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder) is not used in this app")
+    }
+    
+    override init(size: CGSize){
+        super.init(size: size)
+        anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        let background = SKSpriteNode(imageNamed: "background")
+        background.yScale = 2.0
+        background.xScale = 2.0
+        addChild(background)
         
-        self.addChild(myLabel)
+        //
+        let layerPosition = CGPoint(
+            x: -TileWidth * CGFloat(NumColumns) / 2,
+            y: -TileHeight * CGFloat(NumRows) / 2)
+        let tilesLayer = SKNode()
+        boardLayer.position = layerPosition
+        addChild(boardLayer)
+    
+    }
+    
+    func addTiles() {
+        for row in 0..<NumRows {
+            for column in 0..<NumColumns {
+                    let tileNode = SKSpriteNode(imageNamed: "Tile")
+                    tileNode.position = pointForColumn(column, row: row)
+                    boardLayer.addChild(tileNode)
+            }
+        }
+    }
+    
+    func addSpriteForGamePiece(#column: Int, row: Int, type: GamePieceType) {
+        let addedGamePiece = GamePiece(type: type)
+        
+        var pieceNode = SKSpriteNode(imageNamed: "Red")
+        if (type == GamePieceType.Black){
+            pieceNode = SKSpriteNode(imageNamed: "Black")
+        }
+        
+        pieceNode.position = pointForColumn(column, row:NumRows)
+        
+        boardLayer.addChild(pieceNode)
+        //animation
+        let actualDuration = CGFloat(2.0)
+        // Create the actions
+        let actionMove = SKAction.moveTo(pointForColumn(column, row: row), duration: NSTimeInterval(actualDuration))
+
+        pieceNode.runAction(SKAction.sequence([actionMove]))
+        
+        
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        /* Called when a touch begins */
+      
         
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
-            
-            sprite.xScale = 0.5
-            sprite.yScale = 0.5
-            sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
-            self.addChild(sprite)
+        
+        // 1
+        let touch = touches.anyObject() as UITouch
+        let location = touch.locationInNode(boardLayer)
+        // 2
+        let (success, column, row) = convertPoint(location)
+        if success {
+            // 3
+            if isFinished {
+                return
+            }
+            if let emptyRow = game.findEmptyPositionInColumn(column: column){
+       
+                game.addGamePieceToBoard(column, row: emptyRow)
+                if(game.gamePieceOnBoard(column: column, row: emptyRow)!.type == GamePieceType.Red){
+                    addSpriteForGamePiece(column: column, row: emptyRow, type: GamePieceType.Red)
+                }
+                else{
+                    addSpriteForGamePiece(column: column, row: emptyRow, type: GamePieceType.Black)
+                }
+                
+                
+                game.checkWinCondition(column, row: emptyRow)
+            }
         }
     }
-   
+    
+    func pointForColumn(column: Int, row: Int) -> CGPoint {
+        return CGPoint(
+            x: CGFloat(column)*TileWidth + TileWidth/2,
+            y: CGFloat(row)*TileHeight + TileHeight/2)
+    }
+    
+    func convertPoint(point: CGPoint) -> (success: Bool, column: Int, row: Int) {
+        if point.x >= 0 && point.x < CGFloat(NumColumns)*TileWidth &&
+            point.y >= 0 && point.y < CGFloat(NumRows)*TileHeight {
+                return (true, Int(point.x / TileWidth), Int(point.y / TileHeight))
+        } else {
+            return (false, 0, 0)  // invalid location
+        }
+    }
+    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
