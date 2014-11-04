@@ -7,3 +7,6 @@ Connect Four or Four in a Row written in Swift SpriteKit
 
 
 If you have never played Connect Four: http://en.wikipedia.org/wiki/Connect_Four
+
+
+![connect_four 1](https://cloud.githubusercontent.com/assets/4943759/4906827/1d4aa844-645c-11e4-8b7f-30404af4bfbb.gif)
