@@ -72,8 +72,6 @@ class GameScene: SKScene {
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
       
-        
-        
         // 1
         let touch = touches.anyObject() as UITouch
         let location = touch.locationInNode(boardLayer)
