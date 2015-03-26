@@ -5,6 +5,8 @@ Connect Four in Swift SpriteKit
 
 #Watch a Live Video Demo! https://vimeo.com/110914950
 
+Vimeo
+
 #What is Connect Four? http://en.wikipedia.org/wiki/Connect_Four
 
 
