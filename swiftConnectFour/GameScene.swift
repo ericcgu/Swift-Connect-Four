@@ -69,11 +69,9 @@ class GameScene: SKScene {
         
         
     }
-    
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-      
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
         // 1
-        let touch = touches.anyObject() as UITouch
+        let touch = touches.first as! UITouch
         let location = touch.locationInNode(boardLayer)
         // 2
         let (success, column, row) = convertPoint(location)
