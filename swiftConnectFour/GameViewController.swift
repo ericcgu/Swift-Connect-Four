@@ -14,7 +14,7 @@ extension SKNode {
         if let path = NSBundle.mainBundle().pathForResource(file as String, ofType: "sks") {
             var sceneData = NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe, error: nil)!
             var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
-            
+
             archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
             let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as! GameScene
             archiver.finishDecoding()
@@ -26,7 +26,6 @@ extension SKNode {
 }
 
 class GameViewController: UIViewController {
-    
     //properties
     var scene: GameScene!
     var game: Game!
@@ -40,18 +39,17 @@ class GameViewController: UIViewController {
         skView.showsNodeCount = false
         skView.ignoresSiblingOrder = true
         scene.scaleMode = .AspectFill
-        
+
         game = Game()
         scene.game = game
         scene.addTiles()
         skView.presentScene(scene)
-
     }
-    
+
     @IBAction func newGame(sender: AnyObject) {
-       viewDidLoad()
+        viewDidLoad()
         isFinished = false
-        
+
     }
     override func shouldAutorotate() -> Bool {
         return true
