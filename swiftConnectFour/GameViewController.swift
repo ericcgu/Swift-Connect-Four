@@ -11,12 +11,12 @@ import SpriteKit
 
 extension SKNode {
     class func unarchiveFromFile(file : NSString) -> SKNode? {
-        if let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks") {
+        if let path = NSBundle.mainBundle().pathForResource(file as String, ofType: "sks") {
             var sceneData = NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe, error: nil)!
             var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
-            
+
             archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
-            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as GameScene
+            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as! GameScene
             archiver.finishDecoding()
             return scene
         } else {
@@ -26,7 +26,6 @@ extension SKNode {
 }
 
 class GameViewController: UIViewController {
-    
     //properties
     var scene: GameScene!
     var game: Game!
@@ -34,24 +33,23 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         let scene = GameScene(size: view.bounds.size)
-        let skView = view as SKView
+        let skView = view as! SKView
         skView.multipleTouchEnabled = true
         skView.showsFPS = false
         skView.showsNodeCount = false
         skView.ignoresSiblingOrder = true
         scene.scaleMode = .AspectFill
-        
+
         game = Game()
         scene.game = game
         scene.addTiles()
         skView.presentScene(scene)
-
     }
-    
+
     @IBAction func newGame(sender: AnyObject) {
-       viewDidLoad()
+        viewDidLoad()
         isFinished = false
-        
+
     }
     override func shouldAutorotate() -> Bool {
         return true
