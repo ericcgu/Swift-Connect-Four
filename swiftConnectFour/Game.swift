@@ -16,20 +16,20 @@ var redTurn = true
 var isFinished = false
 
 class Game {
-    private var gameBoard = Array2D<GamePiece>(columns: NumColumns, rows: NumRows)
+    fileprivate var gameBoard = Array2D<GamePiece>(columns: NumColumns, rows: NumRows)
 
-    func gamePieceOnBoard(#column: Int, row: Int) -> GamePiece? {
+    func gamePieceOnBoard(_ column: Int, _ row: Int) -> GamePiece? {
         return gameBoard[column, row]
     }
 
-    func findEmptyPositionInColumn(#column: Int) -> Int? {
+    func findEmptyPositionInColumn(column: Int) -> Int? {
         //check if column is full
         if(gameBoard[column, NumRows-1] != nil) {
             return nil
         }
 
         //find the first empty row
-        for var row = 0; row < NumRows; ++row {
+        for row in 0 ..< NumRows {
             if (gameBoard[column, row]) == nil {
                 return row
             }
@@ -37,31 +37,31 @@ class Game {
         return nil
     }
 
-    func gamePieceTypeOnBoard(#column: Int, row: Int) -> GamePieceType {
+    func gamePieceTypeOnBoard(column: Int, _ row: Int) -> GamePieceType {
 
         if column < 0 || row < 0 || column > NumColumns - 1 || row > NumRows - 1 {
-            return GamePieceType.Undefined
+            return GamePieceType.undefined
         }
 
-        if gamePieceOnBoard(column: column, row: row) == nil {
-            return GamePieceType.Undefined
+        if gamePieceOnBoard(column, row) == nil {
+            return GamePieceType.undefined
         } else {
-            return gamePieceOnBoard(column: column, row: row)!.type
+            return gamePieceOnBoard(column, row)!.type
         }
     }
 
-    func isLinearMatch(#column: Int, row: Int, stepX: Int, stepY: Int)->Bool {
-        var startGamePieceType = gamePieceTypeOnBoard(column: column, row: row)
+    func isLinearMatch(column: Int, row: Int, stepX: Int, stepY: Int)->Bool {
+        let startGamePieceType = gamePieceTypeOnBoard(column: column, row)
 
-        for var i = 0; i < 4; ++i{
-            var newX = row + i * stepY
-            var newY = column + i * stepX
+        for i in 0 ..< 4 {
+            let newX = row + i * stepY
+            let newY = column + i * stepX
 
-            if(gamePieceTypeOnBoard(column: newY, row: newX) == GamePieceType.Undefined) {
+            if(gamePieceTypeOnBoard(column: newY, newX) == GamePieceType.undefined) {
                 return false
             }
 
-            if (startGamePieceType != gamePieceTypeOnBoard(column: newY, row: newX)) {
+            if (startGamePieceType != gamePieceTypeOnBoard(column: newY, newX)) {
                 return false
             }
         }
@@ -69,10 +69,10 @@ class Game {
         return true
     }
 
-    func checkWinCondition (column: Int, row: Int) {
+    func checkWinCondition (_ column: Int, row: Int) {
         let alert = UIAlertView()
         alert.title = "Four In a Row! Game Over!"
-        alert.addButtonWithTitle("OK")
+        alert.addButton(withTitle: "OK")
 
         for row in 0..<gameBoard.rows {
             for column in 0..<gameBoard.columns {
@@ -104,7 +104,7 @@ class Game {
         }
     }
 
-    func addGamePieceToBoard(column: Int, row: Int) {
+    func addGamePieceToBoard(_ column: Int, row: Int) {
         //temporary switch
         if redTurn == true {
             redTurn = false
@@ -117,9 +117,9 @@ class Game {
 
         var newGamePieceType:GamePieceType!
         if redTurn {
-            newGamePieceType = GamePieceType.Red
+            newGamePieceType = GamePieceType.red
         } else {
-            newGamePieceType = GamePieceType.Black
+            newGamePieceType = GamePieceType.black
         }
         
         let newGamePiece = GamePiece(type: newGamePieceType)

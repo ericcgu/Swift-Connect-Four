@@ -11,17 +11,19 @@ import SpriteKit
 
 extension SKNode {
     class func unarchiveFromFile(file : NSString) -> SKNode? {
-        if let path = NSBundle.mainBundle().pathForResource(file as String, ofType: "sks") {
-            var sceneData = NSData(contentsOfFile: path, options: .DataReadingMappedIfSafe, error: nil)!
-            var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
+        let path = Bundle.main.path(forResource: file as String, ofType: "sks")
 
-            archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
-            let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as! GameScene
+        let sceneData = try? NSData(contentsOfFile: path!, options: .mappedIfSafe)
+        let archiver = NSKeyedUnarchiver(forReadingWith: sceneData! as Data)
+
+        archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
+        if let scene = archiver.decodeObject(forKey: NSKeyedArchiveRootObjectKey) as? SKScene
+        {
             archiver.finishDecoding()
             return scene
-        } else {
-            return nil
         }
+
+        return nil
     }
 }
 
@@ -34,11 +36,11 @@ class GameViewController: UIViewController {
         super.viewDidLoad()
         let scene = GameScene(size: view.bounds.size)
         let skView = view as! SKView
-        skView.multipleTouchEnabled = true
+        skView.isMultipleTouchEnabled = true
         skView.showsFPS = false
         skView.showsNodeCount = false
         skView.ignoresSiblingOrder = true
-        scene.scaleMode = .AspectFill
+        scene.scaleMode = .aspectFill
 
         game = Game()
         scene.game = game
@@ -46,24 +48,26 @@ class GameViewController: UIViewController {
         skView.presentScene(scene)
     }
 
-    @IBAction func newGame(sender: AnyObject) {
+    @IBAction func newGame(_ sender: AnyObject) {
         viewDidLoad()
         isFinished = false
 
     }
-    override func shouldAutorotate() -> Bool {
+    override var shouldAutorotate : Bool {
         return true
     }
 
+    /*
     override func supportedInterfaceOrientations() -> Int {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            return Int(UIInterfaceOrientationMask.AllButUpsideDown.rawValue)
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            return Int(UIInterfaceOrientationMask.allButUpsideDown.rawValue)
         } else {
-            return Int(UIInterfaceOrientationMask.All.rawValue)
+            return Int(UIInterfaceOrientationMask.all.rawValue)
         }
     }
+ */
 
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden : Bool {
         return true
     }
 }
