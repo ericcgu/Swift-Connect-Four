@@ -46,11 +46,11 @@ class GameScene: SKScene {
         }
     }
 
-    func addSpriteForGamePiece(#column: Int, row: Int, type: GamePieceType) {
+    func addSpriteForGamePiece(column: Int, _ row: Int, type: GamePieceType) {
         let addedGamePiece = GamePiece(type: type)
 
         var pieceNode = SKSpriteNode(imageNamed: "Red")
-        if (type == GamePieceType.Black){
+        if (type == GamePieceType.black){
             pieceNode = SKSpriteNode(imageNamed: "Black")
         }
 
@@ -60,29 +60,26 @@ class GameScene: SKScene {
         //animation
         let actualDuration = CGFloat(2.0)
         // Create the actions
-        let actionMove = SKAction.moveTo(pointForColumn(column, row: row), duration: NSTimeInterval(actualDuration))
+        let actionMove = SKAction.move(to: pointForColumn(column, row: row), duration: TimeInterval(actualDuration))
 
-        pieceNode.runAction(SKAction.sequence([actionMove]))
+        pieceNode.run(SKAction.sequence([actionMove]))
     }
 
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        // 1
-        let touch = touches.first as! UITouch
-        let location = touch.locationInNode(boardLayer)
-        // 2
-        let (success, column, row) = convertPoint(location)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        let touch = touches.first
+        let location = touch?.location(in: boardLayer)
+        let (success, column, row) = convertPoint(location!)
         if success {
-            // 3
             if isFinished {
                 return
             }
             if let emptyRow = game.findEmptyPositionInColumn(column: column){
 
                 game.addGamePieceToBoard(column, row: emptyRow)
-                if(game.gamePieceOnBoard(column: column, row: emptyRow)!.type == GamePieceType.Red) {
-                    addSpriteForGamePiece(column: column, row: emptyRow, type: GamePieceType.Red)
+                if(game.gamePieceOnBoard(column, emptyRow)!.type == GamePieceType.red) {
+                    addSpriteForGamePiece(column: column, emptyRow, type: GamePieceType.red)
                 } else {
-                    addSpriteForGamePiece(column: column, row: emptyRow, type: GamePieceType.Black)
+                    addSpriteForGamePiece(column: column, emptyRow, type: GamePieceType.black)
                 }
 
                 game.checkWinCondition(column, row: emptyRow)
@@ -90,13 +87,13 @@ class GameScene: SKScene {
         }
     }
 
-    func pointForColumn(column: Int, row: Int) -> CGPoint {
+    func pointForColumn(_ column: Int, row: Int) -> CGPoint {
         return CGPoint(
             x: CGFloat(column)*TileWidth + TileWidth/2,
             y: CGFloat(row)*TileHeight + TileHeight/2)
     }
 
-    func convertPoint(point: CGPoint) -> (success: Bool, column: Int, row: Int) {
+    func convertPoint(_ point: CGPoint) -> (success: Bool, column: Int, row: Int) {
         if point.x >= 0 && point.x < CGFloat(NumColumns)*TileWidth &&
             point.y >= 0 && point.y < CGFloat(NumRows)*TileHeight {
                 return (true, Int(point.x / TileWidth), Int(point.y / TileHeight))
@@ -105,7 +102,7 @@ class GameScene: SKScene {
         }
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         /* Called before each frame is rendered */
     }
 }

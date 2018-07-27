@@ -11,22 +11,22 @@ import SpriteKit
 
 enum GamePieceType: Int {
     case
-    Undefined,
-    Red,
-    Black
+    undefined,
+    red,
+    black
     func description() -> String {
         switch self {
-        case Undefined:
+        case .undefined:
             return "Undefined"
-        case Red:
+        case .red:
             return "Red"
-        case Black:
+        case .black:
             return "Black"
         }
     }
 }
 
-class GamePiece: Printable {
+class GamePiece: CustomStringConvertible {
     var type: GamePieceType
 
     init(type: GamePieceType){
